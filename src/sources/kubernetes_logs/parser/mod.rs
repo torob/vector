@@ -27,13 +27,19 @@ enum ParserState {
 pub struct Parser {
     state: ParserState,
     log_namespace: LogNamespace,
+    source_name: &'static str,
 }
 
 impl Parser {
     pub const fn new(log_namespace: LogNamespace) -> Self {
+        Self::new_for_source(log_namespace, super::Config::NAME)
+    }
+
+    pub const fn new_for_source(log_namespace: LogNamespace, source_name: &'static str) -> Self {
         Self {
             state: ParserState::Uninitialized,
             log_namespace,
+            source_name,
         }
     }
 }
@@ -66,7 +72,10 @@ impl FunctionTransform for Parser {
                 self.state = if bytes.len() > 1 && bytes[0] == b'{' {
                     ParserState::Docker(docker::Docker::new(self.log_namespace))
                 } else {
-                    ParserState::Cri(cri::Cri::new(self.log_namespace))
+                    ParserState::Cri(cri::Cri::with_source_name(
+                        self.log_namespace,
+                        self.source_name,
+                    ))
                 };
                 self.transform(output, event)
             }

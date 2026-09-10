@@ -14,7 +14,7 @@ use crate::{
     internal_events::{
         DROP_EVENT, ParserConversionError, ParserMatchError, ParserMissingFieldError,
     },
-    sources::kubernetes_logs::{Config, transform_utils::get_message_path},
+    sources::kubernetes_logs_common::get_message_path,
     transforms::{FunctionTransform, OutputBuffer},
 };
 
@@ -35,11 +35,20 @@ const TIMESTAMP_KEY: &str = "timestamp";
 #[derivative(Debug)]
 pub(super) struct Cri {
     log_namespace: LogNamespace,
+    source_name: &'static str,
 }
 
 impl Cri {
+    #[cfg(test)]
     pub const fn new(log_namespace: LogNamespace) -> Self {
-        Self { log_namespace }
+        Self::with_source_name(log_namespace, "kubernetes_logs")
+    }
+
+    pub const fn with_source_name(log_namespace: LogNamespace, source_name: &'static str) -> Self {
+        Self {
+            log_namespace,
+            source_name,
+        }
     }
 }
 
@@ -80,7 +89,7 @@ impl FunctionTransform for Cri {
                     // during the above capturing and mapping.
                     if parsed_log.multiline_tag[0] == b'P' {
                         self.log_namespace.insert_source_metadata(
-                            Config::NAME,
+                            self.source_name,
                             log,
                             Some(LegacyKey::Overwrite(path!(event::PARTIAL))),
                             path!(event::PARTIAL),
@@ -96,7 +105,7 @@ impl FunctionTransform for Cri {
                         // when the runtime processed this message.
                         {
                             self.log_namespace.insert_source_metadata(
-                                Config::NAME,
+                                self.source_name,
                                 log,
                                 log_schema().timestamp_key().map(LegacyKey::Overwrite),
                                 path!(TIMESTAMP_KEY),
@@ -116,7 +125,7 @@ impl FunctionTransform for Cri {
 
                     // STREAM_TAG
                     self.log_namespace.insert_source_metadata(
-                        Config::NAME,
+                        self.source_name,
                         log,
                         Some(LegacyKey::Overwrite(path!(STREAM_KEY))),
                         path!(STREAM_KEY),
@@ -185,7 +194,7 @@ fn parse_log_line(line: &[u8]) -> Option<ParsedLog<'_>> {
     })
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "sources-kubernetes_logs"))]
 pub mod tests {
     use bytes::Bytes;
     use vrl::value;

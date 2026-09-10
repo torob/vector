@@ -1,3 +1,5 @@
+#![cfg_attr(feature = "sources-kubernetes_logs_fs", allow(dead_code))]
+
 use vector_lib::{
     NamedInternalEvent, counter,
     internal_event::{

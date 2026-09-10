@@ -56,6 +56,7 @@ mod exec;
 #[cfg(any(
     feature = "sources-file",
     feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs",
     feature = "sinks-file",
     feature = "sinks-aws_s3",
     feature = "sinks-azure_blob",
@@ -88,7 +89,10 @@ mod internal_logs;
 mod journald;
 #[cfg(any(feature = "sources-kafka", feature = "sinks-kafka"))]
 mod kafka;
-#[cfg(feature = "sources-kubernetes_logs")]
+#[cfg(any(
+    feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs"
+))]
 mod kubernetes_logs;
 #[cfg(feature = "transforms-log_to_metric")]
 mod log_to_metric;
@@ -109,6 +113,7 @@ mod nginx_metrics;
 mod open;
 #[cfg(any(
     feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs",
     feature = "transforms-log_to_metric",
     feature = "sinks-datadog_events",
 ))]
@@ -217,6 +222,7 @@ pub use self::expansion::*;
 #[cfg(any(
     feature = "sources-file",
     feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs",
     feature = "sinks-file",
 ))]
 pub(crate) use self::file::*;
@@ -242,7 +248,10 @@ pub(crate) use self::internal_logs::*;
 pub(crate) use self::journald::*;
 #[cfg(any(feature = "sources-kafka", feature = "sinks-kafka"))]
 pub(crate) use self::kafka::*;
-#[cfg(feature = "sources-kubernetes_logs")]
+#[cfg(any(
+    feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs"
+))]
 pub(crate) use self::kubernetes_logs::*;
 #[cfg(feature = "transforms-log_to_metric")]
 pub(crate) use self::log_to_metric::*;
@@ -260,6 +269,7 @@ pub(crate) use self::mqtt::*;
 pub(crate) use self::nginx_metrics::*;
 #[cfg(any(
     feature = "sources-kubernetes_logs",
+    feature = "sources-kubernetes_logs_fs",
     feature = "transforms-log_to_metric",
     feature = "sinks-datadog_events",
 ))]

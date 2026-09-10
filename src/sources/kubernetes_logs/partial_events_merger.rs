@@ -20,7 +20,7 @@ use crate::{
     event,
     event::{Event, LogEvent, Value},
     internal_events::{KubernetesMergedLineTooBigError, KubernetesMergedLineTruncated},
-    sources::kubernetes_logs::transform_utils::get_message_path,
+    sources::kubernetes_logs_common::get_message_path,
 };
 
 /// The key we use for `file` field.
@@ -189,21 +189,41 @@ struct Bucket {
 }
 
 /// Merges partial events from a stream, with support for size limits and oversized behavior.
+#[cfg(feature = "sources-kubernetes_logs")]
 pub fn merge_partial_events(
     stream: impl Stream<Item = Event> + 'static,
     log_namespace: LogNamespace,
     maybe_max_merged_line_bytes: Option<usize>,
     oversized_action: OversizedAction,
 ) -> impl Stream<Item = Event> {
-    merge_partial_events_with_custom_expiration(
+    merge_partial_events_with_source_name(
         stream,
         log_namespace,
+        super::Config::NAME,
+        maybe_max_merged_line_bytes,
+        oversized_action,
+    )
+}
+
+/// Merge partial events using a custom source metadata namespace.
+pub fn merge_partial_events_with_source_name(
+    stream: impl Stream<Item = Event> + 'static,
+    log_namespace: LogNamespace,
+    source_name: &'static str,
+    maybe_max_merged_line_bytes: Option<usize>,
+    oversized_action: OversizedAction,
+) -> impl Stream<Item = Event> {
+    merge_partial_events_with_source_name_and_expiration(
+        stream,
+        log_namespace,
+        source_name,
         EXPIRATION_TIME,
         maybe_max_merged_line_bytes,
         oversized_action,
     )
 }
 
+#[cfg(all(test, feature = "sources-kubernetes_logs"))]
 fn merge_partial_events_with_custom_expiration(
     stream: impl Stream<Item = Event> + 'static,
     log_namespace: LogNamespace,
@@ -211,17 +231,33 @@ fn merge_partial_events_with_custom_expiration(
     maybe_max_merged_line_bytes: Option<usize>,
     oversized_action: OversizedAction,
 ) -> impl Stream<Item = Event> {
+    merge_partial_events_with_source_name_and_expiration(
+        stream,
+        log_namespace,
+        super::Config::NAME,
+        expiration_time,
+        maybe_max_merged_line_bytes,
+        oversized_action,
+    )
+}
+
+fn merge_partial_events_with_source_name_and_expiration(
+    stream: impl Stream<Item = Event> + 'static,
+    log_namespace: LogNamespace,
+    source_name: &'static str,
+    expiration_time: Duration,
+    maybe_max_merged_line_bytes: Option<usize>,
+    oversized_action: OversizedAction,
+) -> impl Stream<Item = Event> {
     let partial_flag_path = match log_namespace {
         LogNamespace::Vector => {
-            OwnedTargetPath::metadata(owned_value_path!(super::Config::NAME, event::PARTIAL))
+            OwnedTargetPath::metadata(owned_value_path!(source_name, event::PARTIAL))
         }
         LogNamespace::Legacy => OwnedTargetPath::event(owned_value_path!(event::PARTIAL)),
     };
 
     let file_path = match log_namespace {
-        LogNamespace::Vector => {
-            OwnedTargetPath::metadata(owned_value_path!(super::Config::NAME, FILE_KEY))
-        }
+        LogNamespace::Vector => OwnedTargetPath::metadata(owned_value_path!(source_name, FILE_KEY)),
         LogNamespace::Legacy => OwnedTargetPath::event(owned_value_path!(FILE_KEY)),
     };
 
@@ -270,7 +306,7 @@ fn merge_partial_events_with_custom_expiration(
     .map(|e| e.into())
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "sources-kubernetes_logs"))]
 mod test {
     use vector_lib::event::LogEvent;
     use vrl::{event_path, metadata_path, value};
