@@ -190,6 +190,7 @@ struct Bucket {
 
 /// Merges partial events from a stream, with support for size limits and oversized behavior.
 #[cfg(feature = "sources-kubernetes_logs")]
+#[allow(dead_code)]
 pub fn merge_partial_events(
     stream: impl Stream<Item = Event> + 'static,
     log_namespace: LogNamespace,
