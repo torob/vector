@@ -69,7 +69,12 @@ else
     exit 1
 fi
 
-echo "${download_sha256sum} $(echo output.*)" | sha256sum --check
+if command -v sha256sum >/dev/null 2>&1; then
+    checksum_command=(sha256sum --check)
+else
+    checksum_command=(shasum -a 256 --check)
+fi
+echo "${download_sha256sum} $(echo output.*)" | "${checksum_command[@]}"
 
 case "$(echo output.*)" in
     *.zip) unzip output.* ;;

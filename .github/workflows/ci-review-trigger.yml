@@ -245,17 +245,3 @@ jobs:
     with:
       ref: ${{ github.event.review.commit_id }}
     secrets: inherit
-
-  packaging:
-    needs: validate
-    if: startsWith(github.event.review.body, '/ci-run-all') || contains(github.event.review.body, '/ci-run-packaging')
-    permissions:
-      contents: write
-      packages: write
-      id-token: write # Required by the reusable publish workflow
-    uses: ./.github/workflows/publish.yml
-    with:
-      git_ref: ${{ github.event.review.commit_id }}
-      channel: custom
-      skip_publish: true
-    secrets: inherit
