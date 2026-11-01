@@ -58,7 +58,7 @@ jobs:
               x86_64-unknown-linux-gnu) make package-rpm-x86_64-unknown-linux-gnu ;;
             esac
           fi
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: vector-${{ env.VECTOR_VERSION }}-${{ matrix.target }}
           path: target/artifacts/vector*
@@ -72,7 +72,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ inputs.tag || github.ref }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: vector-${{ env.VECTOR_VERSION }}-*
           path: target/artifacts
@@ -81,7 +81,7 @@ jobs:
         env:
           VECTOR_VERSION: ${{ env.VECTOR_VERSION }}
         run: make sha256sum
-      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: vector-${{ env.VECTOR_VERSION }}-SHA256SUMS
           path: target/artifacts/vector-${{ env.VECTOR_VERSION }}-SHA256SUMS
@@ -98,7 +98,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ inputs.tag || github.ref }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: vector-${{ env.VECTOR_VERSION }}-*
           path: target/artifacts
@@ -147,7 +147,7 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ inputs.tag || github.ref }}
-      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           pattern: vector-${{ env.VECTOR_VERSION }}-*
           path: target/artifacts
