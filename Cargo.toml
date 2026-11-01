@@ -147,7 +147,7 @@ let_underscore_must_use = "warn"
 
 [workspace.dependencies]
 antithesis-instrumentation = { version = "0.1", default-features = false, features = [] }
-antithesis_sdk = { version = "0.2", default-features = false, features = [] }
+antithesis_sdk = { version = "0.3", default-features = false, features = [] }
 anyhow = { version = "1.0.102", default-features = false, features = ["std"] }
 arc-swap = { version = "1.8.2", default-features = false }
 async-compression = { version = "0.4.42", default-features = false, features = ["tokio", "gzip"] }
@@ -163,11 +163,11 @@ clap = { version = "4.5.60", default-features = false, features = ["derive", "er
 clap_complete = "4.6.5"
 colored = { version = "3.1.1", default-features = false }
 const-str = { version = "1.1.0", default-features = false }
-convert_case = { version = "0.10", default-features = false }
+convert_case = { version = "0.12", default-features = false }
 criterion = "0.8"
 crossbeam-utils = { version = "0.8.21", default-features = false }
 cuckoo-clock = { version = "0.2.7" , default-features = false }
-darling = { version = "0.23.0", default-features = false, features = ["suggestions"] }
+darling = { version = "0.24.1", default-features = false, features = ["suggestions"] }
 dashmap = { version = "6.1.0", default-features = false }
 derivative = { version = "2.2.0", default-features = false }
 exitcode = { version = "1.1.2", default-features = false }
@@ -191,7 +191,7 @@ ordered-float = { version = "5.3.0", default-features = false }
 pastey = { version = "0.2", default-features = false }
 pin-project = { version = "1.1.11", default-features = false }
 proptest = { version = "1.11" }
-proptest-derive = { version = "0.8.0" }
+proptest-derive = { version = "0.9.0" }
 prost = { version = "0.12", default-features = false, features = ["std"] }
 prost-build = { version = "0.12", default-features = false }
 prost-reflect = { version = "0.14", features = ["serde"], default-features = false }
@@ -236,8 +236,8 @@ vector-common-macros = { path = "lib/vector-common-macros" }
 vector-lib = { path = "lib/vector-lib", default-features = false }
 vector-vrl-category = { path = "lib/vector-vrl/category" }
 vector-vrl-functions = { path = "lib/vector-vrl/functions", default-features = false }
-vrl = { default-features = false, features = ["arbitrary", "cli", "test", "test_framework", "stdlib-base"] , version = "0.35.0" }
-zstd = { version = "0.13.0", default-features = false }
+vrl = { default-features = false, features = ["arbitrary", "cli", "test", "test_framework", "stdlib-base"] , version = "0.38.0" }
+zstd = { version = "0.14.3", default-features = false }
 mock_instant = { version = "0.6" }
 serial_test = { version = "4.0" }
 strum = { version = "0.28", features = ["derive"] }
